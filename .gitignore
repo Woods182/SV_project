@@ -1,0 +1,24 @@
+# Generated simulation and review artifacts
+work/
+*.vcd
+*.fst
+*.vvp
+*.log
+*.jou
+
+# Simulator/tool state (keep directory README files)
+csrc/*
+!csrc/README.md
+out/*
+!out/README.md
+log/*
+!log/README.md
+.Xil/
+xsim.dir/
+obj_dir/
+
+# Editors and OS
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
