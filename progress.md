@@ -9,7 +9,9 @@
 - 目录和文档骨架：VERIFIED
 - 权威执行环境：Arous `/home/ningbin/workspace/SV_project`
 - 目录/运行参考：Arous `/home/ningbin/workspace/VISL_project`
-- 新远端 Git 仓库：等待迁移、运行验收和回读
+- 新远端 Git 仓库：VERIFIED（`main`，首提交 `192dbc7`）
+- VISL 风格目录：VERIFIED（design/testbench/testcase/filelists 各 15 题）
+- Makefile 空项目验收：VERIFIED（lint/run 明确 SKIP；regress `ran=0 failed=0 total=15`）
 - SystemVerilog lint：VERIFIED（Arous Verible 拆分探针返回 0；尚无用户 RTL）
 - SystemVerilog 仿真：VERIFIED（Arous Icarus 12.0-devel + VVP 探针 PASS；尚无用户 RTL）
 - 用户 RTL 完成数：0/15
