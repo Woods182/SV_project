@@ -1,27 +1,22 @@
 # 进度板
 
-最近更新：2026-08-31
+最近更新：2026-09-02
 
 ## 项目级
 
-- PDF 文本提取：VERIFIED（50 页，已提取）
-- PDF 逐页目检：VERIFIED（50/50 页）
-- 目录和文档骨架：VERIFIED
+- PDF 文本提取与逐页目检：VERIFIED（50/50 页）
+- 15 题目录和文档骨架：VERIFIED
 - 权威执行环境：Arous `/home/ningbin/workspace/SV_project`
-- 目录/运行参考：Arous `/home/ningbin/workspace/VISL_project`
-- 新远端 Git 仓库：VERIFIED（`main`，首提交 `192dbc7`）
-- VISL 风格目录：VERIFIED（design/testbench/testcase/filelists 各 15 题）
-- Makefile 空项目验收：VERIFIED（lint/run 明确 SKIP；regress `ran=0 failed=0 total=15`）
-- SystemVerilog lint：VERIFIED（Arous Verible 拆分探针返回 0；尚无用户 RTL）
-- SystemVerilog 仿真：VERIFIED（Arous Icarus 12.0-devel + VVP 探针 PASS；尚无用户 RTL）
-- 用户 RTL 完成数：0/15
-- 用户 self-checking TB 完成数：0/15
+- VCS S-2021.09、Verible 与 Yosys 工具链：VERIFIED
+- 用户 RTL 完成数：1/15
+- self-checking testbench 完成数：1/15
+- 工具验收完成数：1/15
 
 ## 单题状态
 
 | # | 主题 | 规格 | 参考 | 架构 | 用户 RTL | 用户 TB | 工具验收 |
 |---:|---|---|---|---|---|---|---|
-| 01 | 异步 FIFO | TODO | TODO | TODO | TODO | TODO | TODO |
+| 01 | 异步 FIFO | VERIFIED | VERIFIED | VERIFIED | VERIFIED | VERIFIED | VERIFIED |
 | 02 | 偶数/奇数/分数分频 | TODO | TODO | TODO | TODO | TODO | TODO |
 | 03 | 上升/下降/双边沿检测 | TODO | TODO | TODO | TODO | TODO | TODO |
 | 04 | 序列检测 FSM | TODO | TODO | TODO | TODO | TODO | TODO |
@@ -37,4 +32,4 @@
 | 14 | 多 bit CDC 握手 | TODO | TODO | TODO | TODO | TODO | TODO |
 | 15 | 乒乓缓存 | TODO | TODO | TODO | TODO | TODO | TODO |
 
-第 1 题当前补充状态：规格澄清清单 `DRAFT`；GitHub 检索计划 `DRAFT`；尚未开始实际检索。
+第 1 题已冻结规格并完成用户 RTL、自检 testbench、Verible lint、VCS 功能仿真和 Yosys 结构检查。PASS 证据及验证边界见 `problems/01_async_fifo/notes.md`。

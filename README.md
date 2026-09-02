@@ -7,10 +7,9 @@
 ## 当前进度
 
 - 已完成 15 道题的目录、规格文档、架构文档、参考记录和仿真 filelist 骨架。
-- 第 1 题“异步 FIFO”正在进行中。
-- 异步 FIFO 参考 RTL 与 self-checking testbench 已完成。
-- 参考 RTL 已通过 Verible lint、Yosys 结构检查以及 VCS 功能仿真。
-- 用户版 `FIFO.sv` 仍在编写和验收中，当前不能标记为通过。
+- 第 1 题“异步 FIFO”已完成，规格、参考、架构、用户 RTL、self-checking testbench 和工具验收均为 `VERIFIED`。
+- 用户版 `FIFO.sv` 已通过 Verible lint、Yosys 结构检查以及 VCS 功能仿真。
+- 当前完成进度为 RTL 1/15、self-checking testbench 1/15、工具验收 1/15。
 - 其余 14 题尚未开始 RTL 实现。
 
 最新的逐题状态见 [progress.md](progress.md)，第 1 题的验证证据见 [problems/01_async_fifo/notes.md](problems/01_async_fifo/notes.md)。
@@ -86,7 +85,7 @@ make clean PROBLEM=01_async_fifo
 
 ## 第 1 题：异步 FIFO
 
-当前 testbench 验证的是 `FIFO_ref.sv`，覆盖以下场景：
+当前默认 testbench 验证用户版 `FIFO.sv`，覆盖以下场景：
 
 - 复位启动、空读抑制和满写抑制；
 - 完整填满、排空和多次地址回绕；
@@ -94,7 +93,7 @@ make clean PROBLEM=01_async_fifo
 - 随机空闲和逐 word scoreboard 顺序比对；
 - Gray 指针单次有效推进最多变化 1 bit。
 
-VCS 当前参考实现的仿真结果：
+VCS 当前用户实现的仿真结果：
 
 ```text
 PASS: writes=144 reads=144 final_occupancy=0
