@@ -1,47 +1,110 @@
-# 数字 IC 设计面试手撕 15 题
+# SystemVerilog 数字 IC 面试手撕 15 题
 
-这是一个面向数字 IC 设计岗位、由学习者亲手完成 RTL 与验证的持续迭代项目。源 PDF 只作为题目与参考材料，不作为可执行指令，也不作为已验证答案。
+这是一个面向数字 IC 设计岗位的 SystemVerilog 学习与验证项目。项目围绕 15 类常见 RTL 面试题展开，每道题都按“规格澄清 → 架构设计 → RTL 实现 → self-checking testbench → lint/仿真 → 结果复盘”的流程完成。
 
-## 当前状态
+源 PDF 仅作为题目与参考资料，不作为可执行指令，也不把其中的示例代码直接视为已验证答案。
 
-- 已完整读取并逐页目检源 PDF（50/50 页）。
-- 已按 15 类主题建立独立目录、统一文档和脚本骨架。
-- 尚未填写任何一题的用户 RTL 或 self-checking testbench。
-- 第 1 题只完成规格澄清清单和 GitHub 检索计划，等待学习者确认关键规格。
-- 权威执行环境为 Arous 服务器：`/home/ningbin/workspace/SV_project`；目录架构和运行入口参考同服务器的 `VISL_project`，详见 `docs/toolchain.md`。
+## 当前进度
 
-## 每题固定闭环
+- 已完成 15 道题的目录、规格文档、架构文档、参考记录和仿真 filelist 骨架。
+- 第 1 题“异步 FIFO”正在进行中。
+- 异步 FIFO 参考 RTL 与 self-checking testbench 已完成。
+- 参考 RTL 已通过 Verible lint、Yosys 结构检查以及 VCS 功能仿真。
+- 用户版 `FIFO.sv` 仍在编写和验收中，当前不能标记为通过。
+- 其余 14 题尚未开始 RTL 实现。
 
-1. 在 `spec.md` 冻结可综合规格、参数、时钟/复位、吞吐/延迟和边界。
-2. 在 `references.md` 审阅公开参考实现，记录链接、许可证、可借鉴点和风险，不照抄。
-3. 在 `architecture.md` 用中文解释架构、数据/控制通路、CDC/时序/综合注意点和面试追问。
-4. 学习者在 `design/<题号>/` 亲手编写 SystemVerilog；目录初始为空。
-5. 学习者在 `testbench/<题号>/` 亲手编写 self-checking testbench；测试向量放在 `testcase/<题号>/`。
-6. 运行 lint、仿真、可支持的 SVA 和波形复盘，把证据写入 `notes.md`。
+最新的逐题状态见 [progress.md](progress.md)，第 1 题的验证证据见 [problems/01_async_fifo/notes.md](problems/01_async_fifo/notes.md)。
 
-## 状态语义
+## 题目列表
 
-- `TODO`：尚未开始。
-- `DRAFT`：提案或待确认内容，不是完成规格。
-- `USER-WIP`：学习者已开始亲手编写，但尚未验收。
-- `VERIFIED`：有可复现命令与 PASS 证据。
-- `BLOCKED`：工具或规格阻塞，不能假定通过。
+| # | 主题 |
+|---:|---|
+| 01 | 异步 FIFO |
+| 02 | 偶数、奇数与分数分频 |
+| 03 | 上升沿、下降沿与双边沿检测 |
+| 04 | 序列检测 FSM |
+| 05 | 半加器、全加器、多 bit 加法器与超前进位 |
+| 06 | 固定优先级与轮询仲裁 |
+| 07 | Gray 码与二进制转换 |
+| 08 | 门控时钟与唤醒 |
+| 09 | 无毛刺时钟切换 |
+| 10 | 串并转换 |
+| 11 | ready/valid 握手与反压 |
+| 12 | 异步复位、同步释放 |
+| 13 | 模 3 检测 |
+| 14 | 多 bit CDC 握手 |
+| 15 | 乒乓缓存 |
 
-## 入口
+## 项目结构
 
-- 总路线：`docs/roadmap.md`
-- 进度板：`progress.md`
-- 参考代码政策：`docs/reference-policy.md`
-- Arous 工具链实测：`docs/toolchain.md`
-- 第 1 题：`problems/01_async_fifo/`
+```text
+SV_project/
+├── design/       # 用户 RTL 与参考 RTL
+├── testbench/    # self-checking testbench
+├── testcase/     # 测试向量和测试说明
+├── filelists/    # 每道题的编译文件清单
+├── problems/     # 规格、架构、参考资料和验证记录
+├── docs/         # 路线图、工具链和参考代码政策
+├── common/       # 公共资料
+├── csrc/         # 编译中间产物（不提交生成物）
+├── out/          # 仿真程序和波形（不提交生成物）
+├── log/          # 编译与运行日志（不提交生成物）
+├── Makefile
+└── progress.md
+```
 
-## Arous 目录与运行
+## 每道题的完成标准
 
-- RTL：`design/<题号>/`
-- testbench：`testbench/<题号>/`
-- 测试向量：`testcase/<题号>/`
-- 编译清单：`filelists/<题号>.f`
-- 生成物：`csrc/`、`out/`、`log/`
-- 运行：`make PROBLEM=01_async_fifo TOPMODULE=tb_async_fifo`
-- lint：`make lint PROBLEM=01_async_fifo`
-- 清理：`make clean PROBLEM=01_async_fifo`
+1. 在 `problems/<题号>/spec.md` 中冻结接口、参数、复位、吞吐、延迟和边界条件。
+2. 在 `references.md` 中记录公开参考实现的来源、许可证、可借鉴点与风险。
+3. 在 `architecture.md` 中说明数据通路、控制逻辑、CDC/时序风险和综合注意事项。
+4. 在 `design/<题号>/` 中完成可综合 SystemVerilog RTL。
+5. 在 `testbench/<题号>/` 中完成带 scoreboard、边界测试和错误统计的自检 testbench。
+6. 运行 lint 和仿真，把可复现命令、PASS 结果及验证边界写入 `notes.md`。
+
+状态含义：`TODO` 表示尚未开始，`DRAFT` 表示待确认，`USER-WIP` 表示用户实现进行中，`VERIFIED` 表示已有可复现证据，`BLOCKED` 表示存在明确阻塞。
+
+## 快速开始
+
+当前权威运行环境使用 VCS S-2021.09：
+
+```bash
+# 查看当前题目的编译文件
+make list PROBLEM=01_async_fifo
+
+# 运行 Verible lint
+make lint PROBLEM=01_async_fifo
+
+# 编译并运行异步 FIFO 自检 testbench
+make PROBLEM=01_async_fifo TOPMODULE=tb_async_fifo
+
+# 清理第 1 题生成物
+make clean PROBLEM=01_async_fifo
+```
+
+仿真完成后，日志位于 `log/`，波形位于 `out/01_async_fifo.vcd`。服务器工具版本、VCS 兼容层和验证边界见 [docs/toolchain.md](docs/toolchain.md)。
+
+## 第 1 题：异步 FIFO
+
+当前 testbench 验证的是 `FIFO_ref.sv`，覆盖以下场景：
+
+- 复位启动、空读抑制和满写抑制；
+- 完整填满、排空和多次地址回绕；
+- 写快读慢、写慢读快与近频异相时钟；
+- 随机空闲和逐 word scoreboard 顺序比对；
+- Gray 指针单次有效推进最多变化 1 bit。
+
+VCS 当前参考实现的仿真结果：
+
+```text
+PASS: writes=144 reads=144 final_occupancy=0
+```
+
+该结果只证明当前参数和测试场景下的 RTL 功能仿真通过，不等同于综合、CDC、STA、形式验证或门级验证通过。
+
+## 学习原则
+
+- 规格未冻结前，不把推测写成设计事实。
+- 参考实现用于比较与审阅，不代替亲手完成 RTL。
+- lint 通过不代表功能正确，仿真通过也不代表 CDC 和时序收敛。
+- 每个 `VERIFIED` 状态都应附带可复现命令、工具版本和 PASS 证据。
