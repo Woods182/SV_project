@@ -13,14 +13,14 @@ parameter int unsigned ADDR_WIDTH = 4
     output logic [DATA_WIDTH-1:0] rdata,
     output logic                  rempty
 );
-    localparam  int unsigned DEPTH     =1 << ADDR_WIDTH;
-    localparam  int unsigned prtwidth = ADDR_WIDTH + 1;
+    localparam int unsigned DEPTH    = 1 << ADDR_WIDTH;
+    localparam int unsigned PtrWidth = ADDR_WIDTH + 1;
 
 
     //  指针同步打两拍
-    logic [prtwidth-1:0] wbin,rbin,rgray,wgray;
-    logic [prtwidth-1:0] wgray_rsync1, wgray_rsync2;
-    logic [prtwidth-1:0] rgray_wsync1, rgray_wsync2;
+    logic [PtrWidth-1:0] wbin,rbin,rgray,wgray;
+    logic [PtrWidth-1:0] wgray_rsync1, wgray_rsync2;
+    logic [PtrWidth-1:0] rgray_wsync1, rgray_wsync2;
 
     always @(posedge rclk or negedge rrst_n) begin
         if (!rrst_n) begin
@@ -32,7 +32,7 @@ parameter int unsigned ADDR_WIDTH = 4
             wgray_rsync2 <= wgray_rsync1;
 
         end
-        
+
     end
 
 
@@ -46,11 +46,11 @@ parameter int unsigned ADDR_WIDTH = 4
             rgray_wsync2 <= rgray_wsync1;
 
         end
-        
+
     end
 
-    logic [prtwidth-1:0] rgray_next,wgray_next;
-    logic [prtwidth-1:0] wbin_next,rbin_next;
+    logic [PtrWidth-1:0] rgray_next,wgray_next;
+    logic [PtrWidth-1:0] wbin_next,rbin_next;
     logic rempty_next,wfull_next;
 
     // 转换grey 码
@@ -59,7 +59,9 @@ parameter int unsigned ADDR_WIDTH = 4
 
     // full,empty next 检测
     assign rempty_next = (rgray_next == wgray_rsync2);
-    assign wfull_next = (wgray_next == {~rgray_wsync2[prtwidth-1:prtwidth-2], rgray_wsync2[prtwidth-3:0]});
+    assign wfull_next =
+        (wgray_next == {~rgray_wsync2[PtrWidth-1:PtrWidth-2],
+                        rgray_wsync2[PtrWidth-3:0]});
 
 
     // 判断 push pop
@@ -69,8 +71,8 @@ parameter int unsigned ADDR_WIDTH = 4
 
 
     // ptr next
-    assign wbin_next = wbin + (wpush ? 1 : 0);
-    assign rbin_next = rbin + (rpop ? 1 : 0);
+    assign wbin_next = wbin + wpush;
+    assign rbin_next = rbin + rpop;
 
     always @(posedge wclk or negedge wrst_n) begin
         if(!wrst_n) begin
@@ -84,7 +86,7 @@ parameter int unsigned ADDR_WIDTH = 4
         end
     end
 
-    
+
     always @(posedge rclk or negedge rrst_n) begin
         if(!rrst_n) begin
             rbin <= '0;
@@ -101,7 +103,7 @@ parameter int unsigned ADDR_WIDTH = 4
     // 数据写入和读出
     logic [DATA_WIDTH-1:0] mem [DEPTH];
 
-    always_ff @(posedge wclk ) begin 
+    always_ff @(posedge wclk ) begin
         if (wpush) begin
             mem[wbin[ADDR_WIDTH-1:0]] <= wdata;
         end
@@ -112,7 +114,7 @@ parameter int unsigned ADDR_WIDTH = 4
     end
 
 
-    always_ff @( posedge rclk or negedge rrst_n ) begin 
+    always_ff @( posedge rclk or negedge rrst_n ) begin
         if (! rrst_n) begin
             rdata <= '0;
         end else if (rpop) begin
@@ -126,5 +128,3 @@ parameter int unsigned ADDR_WIDTH = 4
 //  此版本不足 没有判断 width = 1的代码
 
 endmodule
-
-

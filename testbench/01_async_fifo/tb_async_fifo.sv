@@ -30,7 +30,7 @@ module tb_async_fifo;
     int unsigned           accepted_reads;
     int unsigned           error_count;
 
-    FIFO_ref #(
+    FIFO #(
         .DATA_WIDTH (DATA_WIDTH),
         .ADDR_WIDTH (ADDR_WIDTH)
     ) dut (

@@ -1,22 +1,40 @@
 # 异步 FIFO：学习与验证记录
 
-## 用户完成状态
+状态：VERIFIED（2026-09-02）
 
-- 用户 RTL `FIFO.sv`：未开始（当前仅有不完整的 `module FIFO`）
-- 参考 RTL `FIFO_ref.sv`：已完成
-- self-checking TB：已完成，当前验证参考 RTL
-- 用户确认的规格：无
+## 完成状态
 
-## 实际命令与证据
+- 冻结规格：已完成，见 `spec.md`。
+- 公开参考审阅：已完成，见 `references.md`。
+- 架构讲解：已完成，见 `architecture.md`。
+- 用户 RTL `FIFO.sv`：已完成并作为默认验收对象。
+- self-checking testbench：已完成，默认实例化用户版 `FIFO`。
+- 参考 RTL `FIFO_ref.sv`：保留作对照，不参与默认 filelist。
 
-2026-09-02 使用 VCS S-2021.09 运行：
+## 实际命令
+
+2026-09-02 在 Arous 使用 VCS S-2021.09、Verible 和 Yosys 验收：
 
 ```bash
 make clean PROBLEM=01_async_fifo
+make lint PROBLEM=01_async_fifo
 make PROBLEM=01_async_fifo TOPMODULE=tb_async_fifo
+
+yosys -p 'read_verilog -sv design/01_async_fifo/FIFO.sv; hierarchy -check -top FIFO; proc; check'
 ```
 
-VCS 仿真结果：
+正式 filelist：
+
+```text
+./design/01_async_fifo/FIFO.sv
+./testbench/01_async_fifo/tb_async_fifo.sv
+```
+
+## 验收结果
+
+Verible lint：PASS，0 条错误。
+
+VCS 编译、elaboration 和仿真：PASS。
 
 ```text
 [TEST] empty-read blocking
@@ -27,31 +45,33 @@ VCS 仿真结果：
 PASS: writes=144 reads=144 final_occupancy=0
 ```
 
-波形：`out/01_async_fifo.vcd`；同时生成 VCS KDB/debug 数据库，可供 DVE/Verdi 调试。
+Yosys `read_verilog/hierarchy/proc/check`：PASS，无结构错误。
 
-此前使用 Icarus 对最小合法参数 `DATA_WIDTH=1, ADDR_WIDTH=1, DEPTH=2` 的复跑结果：
+波形：`out/01_async_fifo.vcd`，大小 96,679 bytes；同时生成 VCS KDB/debug 数据库。
 
-```text
-PASS: writes=36 reads=36 final_occupancy=0
-```
+## 覆盖范围
 
-静态检查：
+- 共同复位启动以及复位后的初始 empty/full 状态；
+- 空读抑制和满写抑制；
+- 完整填满、排空和多个地址 wrap-around；
+- 写快读慢、写慢读快、近频异相；
+- 随机写入、读取和空闲；
+- 只对已接受事务计数的逐 word scoreboard；
+- 被拒绝请求不会推进本地指针；
+- 本地 Gray 指针每次有效推进最多变化 1 bit；
+- 仿真结束前队列完全排空，写入数等于读取数。
 
-- `make lint PROBLEM=01_async_fifo`：Verible PASS，0 条告警。
-- Yosys `read_verilog/hierarchy/proc/check`：PASS，0 个结构问题。
+## 修正记录
 
-覆盖：复位启动、空读抑制、满写抑制、完整填满/排空、多个 wrap-around、写快读慢、写慢读快、近频异相、随机空闲、逐 word scoreboard、Gray 指针单 bit 变化检查。
+- 正式 filelist 和 testbench 已从参考模块 `FIFO_ref` 切换到用户模块 `FIFO`。
+- 修正 Verible 报告的参数命名、行长和尾随空格问题。
+- 使用一位 `wpush/rpop` 直接递增指针，消除 VCS 的无尺寸整数位宽告警。
+- 当前用户实现的冻结范围为 `ADDR_WIDTH >= 2`；最小深度 2 不属于本版验收范围。
 
-当前 PASS 只证明 RTL 功能仿真；不替代综合、CDC、STA 或门级验证。
+## 验证边界
 
-## 波形复盘
-
-- 已由 VCS 保存 `out/01_async_fifo.vcd`（96,673 bytes，timescale 1 ps）。
-- VCD 包含 TB、DUT、二进制/Gray 指针、两级同步寄存器、RAM、full/empty 和 scoreboard 相关信号。
-- 当前仅核验文件有效且来源为 VCS S-2021.09，尚未进行人工 GUI 波形复盘。
-
-## 错误与改进
-
-- 复位契约限定为共同异步拉低、分别同步释放；不支持运行中的单域复位。
-- 双时钟数组能否映射为目标 SRAM/BRAM，以及 read-during-write 语义，需要结合具体 ASIC/FPGA 存储宏确认。
-- `ASYNC_REG` 属性不能代替 CDC/STA 约束；实现阶段仍需设置 Gray 总线最大延迟/偏斜约束并跑 CDC 工具。
+- RTL 仿真不会注入或证明真实亚稳态行为。
+- 两级同步器和 Gray 编码不能替代 CDC 静态检查及约束审阅。
+- 尚未完成目标工艺下的综合映射、RAM read-during-write 审核、STA、门级仿真和形式验证。
+- `ASYNC_REG` 属性、Gray 总线最大延迟/偏斜约束需在具体 FPGA/ASIC 流程中补充。
+- 不支持运行期间单独复位一个时钟域；两个域必须共同异步复位并分别同步释放。
