@@ -1,24 +1,22 @@
-# Generated simulation and review artifacts
-work/
-*.vcd
-*.fst
-*.vvp
-*.log
-*.jou
+# Strict allowlist: ignore everything by default.
+*
 
-# Simulator/tool state (keep directory README files)
-csrc/*
-!csrc/README.md
-out/*
-!out/README.md
-log/*
-!log/README.md
-.Xil/
-xsim.dir/
-obj_dir/
+# Keep directories visible so allowed files below can be discovered.
+!*/
 
-# Editors and OS
-.vscode/
-.idea/
-Thumbs.db
-Desktop.ini
+# RTL source and include files.
+!*.sv
+!*.svh
+!*.v
+!*.vh
+
+# Documentation and source material.
+!*.md
+!*.pdf
+
+# Build metadata explicitly requested for version control.
+!/Makefile
+!*.f
+
+# Keep this policy itself under version control.
+!.gitignore
